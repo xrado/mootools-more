@@ -315,7 +315,7 @@ var Depender = {
 				});
 			};
 			if (required.scripts.length != loaded.length) return;
-			required.callback();
+			if (required.callback) required.callback();
 			this.required.erase(required);
 			this.fireEvent('requirementLoaded', [loaded, required]);
 		}, this);
