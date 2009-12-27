@@ -107,6 +107,7 @@ var Depender = {
 		new Request.JSON({
 			url: url,
 			secure: false,
+			method: 'get',
 			onSuccess: callback
 		}).send();
 	},
