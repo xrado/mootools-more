@@ -68,7 +68,7 @@ var Depender = {
 	required: [],
 
 	require: function(options){
-		var loaded = function(){
+		var loaded = function(i,options){
 			var scripts = this.calculateDependencies(options.scripts);
 			if (options.sources){
 				options.sources.each(function(source){
@@ -77,15 +77,18 @@ var Depender = {
 			}
 			if (options.serial) scripts.combine(this.getLoadedScripts());
 			options.scripts = scripts;
-			this.required.push(options);
+			this.required[i] = options;	
 			this.fireEvent('require', options);
 			this.loadScripts(options.scripts);
 		};
+		this.required.push(options);
 		if (this.mapLoaded){
 			loaded.call(this);
 		} else {
 			this.addEvent('mapLoaded', function(){
-				loaded.call(this);
+				this.required.each(function(v,i){
+					loaded.call(this,i,v);
+				},this);
 				this.removeEvent('mapLoaded', arguments.callee);
 			});
 		}
