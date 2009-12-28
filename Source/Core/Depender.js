@@ -83,7 +83,7 @@ var Depender = {
 		};
 		this.required.push(options);
 		if (this.mapLoaded){
-			loaded.call(this);
+			loaded.call(this,this.required.length,options);
 		} else {
 			this.addEvent('mapLoaded', function(){
 				this.required.each(function(v,i){
