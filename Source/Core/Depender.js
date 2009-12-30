@@ -231,8 +231,8 @@ var Depender = {
 	toLoad: [],
 
 	loadScript: function(script){
-		if (this.scriptsState[script] && this.toLoad.length){
-			this.loadScript(this.toLoad.shift());
+		if (this.scriptsState[script]){
+			if(this.toLoad.length) this.loadScript(this.toLoad.shift());
 			return;
 		} else if (this.loading){
 			this.toLoad.push(script);
