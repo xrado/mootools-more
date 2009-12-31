@@ -1,4 +1,5 @@
 
+
 /*
 ---
 
@@ -308,7 +309,7 @@ var Depender = {
 
 	check: function(){
 		var incomplete = [];
-		this.required.each(function(required){
+		this.required.each(function(required,i){
 			var loaded = [];
 			required.scripts.each(function(script){
 				if (this.scriptsState[script]) loaded.push(script);
@@ -321,9 +322,10 @@ var Depender = {
 			};
 			if (required.scripts.length != loaded.length) return;
 			if (required.callback) required.callback();
-			this.required.erase(required);
+			this.required[i] = null;
 			this.fireEvent('requirementLoaded', [loaded, required]);
 		}, this);
+		this.required = this.required.clean();
 	}
 
 };
