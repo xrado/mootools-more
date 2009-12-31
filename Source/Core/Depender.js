@@ -3,6 +3,8 @@
 
 
 
+
+
 /*
 ---
 
@@ -51,6 +53,8 @@ var Depender = {
 	sources: {},
 
 	libs: {},
+
+	mapLoaded:true,
 
 	include: function(libs){
 		this.log('include: ', libs);
