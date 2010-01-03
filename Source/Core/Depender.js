@@ -171,15 +171,11 @@ var Depender = {
 		}, this);
 	},
 
-	getDepsForScript: function(script){
-		return this.deps[this.pathMap[script]] || [];
-	},
-
 	calculateDependencies: function(scripts){
 		var reqs = [];
 		$splat(scripts).each(function(script){
 			if (script == 'None' || !script) return;
-			var deps = this.getDepsForScript(script);
+			var deps = this.deps[this.pathMap[script]] || [];
 			if (!deps){
 				if (window.console && console.warn) console.warn('dependencies not mapped: script: %o, map: %o, :deps: %o', script, this.pathMap, this.deps);
 			} else {
