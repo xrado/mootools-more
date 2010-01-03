@@ -71,16 +71,7 @@ var Depender = {
 
 	require: function(options){
 		this.required.push(options);
-		if (this.mapLoaded){
-			this.loaded.call(this,this.required.length-1);
-		} else {
-			this.addEvent('mapLoaded', function(){
-				this.required.each(function(v,i){
-					this.loaded.call(this,i);
-				},this);
-				this.removeEvent('mapLoaded', arguments.callee);
-			});
-		}
+		if (this.mapLoaded) this.loaded(this.required.length - 1);
 		return this;
 	},
 
@@ -141,7 +132,9 @@ var Depender = {
 			this.mapLoaded = true;
 			this.calculateLoaded();
 			this.lastLoaded = this.getLoadedScripts().getLength();
-			this.fireEvent('mapLoaded');
+			this.required.each(function(v,i){
+				this.loaded(i);
+			},this);
 		}
 	},
 
