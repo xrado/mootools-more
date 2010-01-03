@@ -70,26 +70,13 @@ var Depender = {
 	required: [],
 
 	require: function(options){
-		var loaded = function(i){
-			var options = this.required[i];
-			var scripts = this.calculateDependencies(options.scripts);
-			if (options.sources){
-				options.sources.each(function(source){
-					scripts.combine(this.libs[source].files);
-				}, this);
-			}
-			options.scripts = scripts;
-			this.required[i] = options;	
-			this.fireEvent('require', options);
-			this.loadScripts(options.scripts);
-		};
 		this.required.push(options);
 		if (this.mapLoaded){
-			loaded.call(this,this.required.length-1);
+			this.loaded.call(this,this.required.length-1);
 		} else {
 			this.addEvent('mapLoaded', function(){
 				this.required.each(function(v,i){
-					loaded.call(this,i);
+					this.loaded.call(this,i);
 				},this);
 				this.removeEvent('mapLoaded', arguments.callee);
 			});
@@ -97,6 +84,20 @@ var Depender = {
 		return this;
 	},
 
+	loaded: function(index){
+		var options = this.required[index];
+		var scripts = this.calculateDependencies(options.scripts);
+		if (options.sources){
+			options.sources.each(function(source){
+				scripts.combine(this.libs[source].files);
+			}, this);
+		}
+		options.scripts = scripts;
+		this.required[index] = options;	
+		this.fireEvent('require', options);
+		this.loadScripts(options.scripts);
+	},
+	
 	cleanDoubleSlash: function(str){
 		if (!str) return str;
 		var prefix = '';
