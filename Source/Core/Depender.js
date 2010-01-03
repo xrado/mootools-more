@@ -210,8 +210,8 @@ var Depender = {
 			}
 		}, this);
 		if (scripts.length){
-			scripts.each(function(scr){
-				this.loadScript(scr);
+			scripts.each(function(scr,i){
+				this.loadScript(scr, scripts.length == i);
 			}, this);
 		} else {
 			this.check();
@@ -220,9 +220,10 @@ var Depender = {
 
 	toLoad: [],
 
-	loadScript: function(script){
+	loadScript: function(script,last){
 		if (this.scriptsState[script]){
-			if(this.toLoad.length) this.loadScript(this.toLoad.shift());
+			if (last) this.check();
+			if (this.toLoad.length) this.loadScript(this.toLoad.shift(),last);
 			return;
 		} else if (this.loading){
 			this.toLoad.push(script);
@@ -231,7 +232,7 @@ var Depender = {
 		var finish = function(){
 			this.loading = false;
 			this.scriptLoaded(script);
-			if (this.toLoad.length) this.loadScript(this.toLoad.shift());
+			if (this.toLoad.length) this.loadScript(this.toLoad.shift(),last);
 		}.bind(this);
 		var error = function(){
 			this.log('could not load: ', scriptPath);
