@@ -86,7 +86,9 @@ var Depender = {
 		options.scripts = scripts;
 		this.required[index] = options;	
 		this.fireEvent('require', options);
-		this.loadScripts(options.scripts);
+		scripts.each(function(scr,i){
+			this.loadScript(scr, scripts.length == i+1);
+		}, this);
 	},
 	
 	cleanDoubleSlash: function(str){
@@ -202,26 +204,10 @@ var Depender = {
 		}
 	},
 
-	loadScripts: function(scripts){
-		scripts = scripts.filter(function(s){
-			if (!this.scriptsState[s] && s != 'None'){
-				this.scriptsState[s] = false;
-				return true;
-			}
-		}, this);
-		if (scripts.length){
-			scripts.each(function(scr,i){
-				this.loadScript(scr, scripts.length == i);
-			}, this);
-		} else {
-			this.check();
-		}
-	},
-
 	toLoad: [],
 
 	loadScript: function(script,last){
-		if (this.scriptsState[script]){
+		if (this.scriptsState[script] || script == 'None'){
 			if (last) this.check();
 			if (this.toLoad.length) this.loadScript(this.toLoad.shift(),last);
 			return;
