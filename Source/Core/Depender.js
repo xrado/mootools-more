@@ -47,6 +47,8 @@ var Depender = {
 
 	libs: {},
 
+	mapLoaded:true,
+
 	include: function(libs){
 		this.log('include: ', libs);
 		this.mapLoaded = false;
@@ -68,24 +70,27 @@ var Depender = {
 	required: [],
 
 	require: function(options){
-		var loaded = function(){
-			var scripts = this.calculateDependencies(options.scripts);
-			if (options.sources){
-				options.sources.each(function(source){
-					scripts.combine(this.libs[source].files);
-				}, this);
-			}
-			if (options.serial) scripts.combine(this.getLoadedScripts());
-			options.scripts = scripts;
-			this.required.push(options);
-			this.fireEvent('require', options);
-			this.loadScripts(options.scripts);
-		};
-		if (this.mapLoaded) loaded.call(this);
-		else this.addEvent('mapLoaded', loaded.bind(this));
+		this.required.push(options);
+		if (this.mapLoaded) this.loaded(this.required.length - 1);
 		return this;
 	},
 
+	loaded: function(index){
+		var options = this.required[index];
+		var scripts = this.calculateDependencies(options.scripts);
+		if (options.sources){
+			options.sources.each(function(source){
+				scripts.combine(this.libs[source].files);
+			}, this);
+		}
+		options.scripts = scripts;
+		this.required[index] = options;	
+		this.fireEvent('require', options);
+		scripts.each(function(scr,i){
+			this.loadScript(scr, scripts.length == i+1);
+		}, this);
+	},
+	
 	cleanDoubleSlash: function(str){
 		if (!str) return str;
 		var prefix = '';
@@ -129,8 +134,9 @@ var Depender = {
 			this.mapLoaded = true;
 			this.calculateLoaded();
 			this.lastLoaded = this.getLoadedScripts().getLength();
-			this.fireEvent('mapLoaded');
-			this.removeEvents('mapLoaded');
+			this.required.each(function(v,i){
+				this.loaded(i);
+			},this);
 		}
 	},
 
@@ -167,24 +173,16 @@ var Depender = {
 		}, this);
 	},
 
-	getDepsForScript: function(script){
-		return this.deps[this.pathMap[script]] || [];
-	},
-
 	calculateDependencies: function(scripts){
 		var reqs = [];
 		$splat(scripts).each(function(script){
 			if (script == 'None' || !script) return;
-			var deps = this.getDepsForScript(script);
-			if (!deps){
-				if (window.console && console.warn) console.warn('dependencies not mapped: script: %o, map: %o, :deps: %o', script, this.pathMap, this.deps);
-			} else {
-				deps.each(function(scr){
-					if (scr == script || scr == 'None' || !scr) return;
-					if (!reqs.contains(scr)) reqs.combine(this.calculateDependencies(scr));
-					reqs.include(scr);
-				}, this);
-			}
+			var deps = this.deps[this.pathMap[script]] || [];
+			deps.each(function(scr){
+				if (scr == script || scr == 'None' || !scr) return;
+				if (!reqs.contains(scr)) reqs.combine(this.calculateDependencies(scr));
+				reqs.include(scr);
+			}, this);
 			reqs.include(script);
 		}, this);
 		return reqs;
@@ -202,27 +200,12 @@ var Depender = {
 		}
 	},
 
-	loadScripts: function(scripts){
-		scripts = scripts.filter(function(s){
-			if (!this.scriptsState[s] && s != 'None'){
-				this.scriptsState[s] = false;
-				return true;
-			}
-		}, this);
-		if (scripts.length){
-			scripts.each(function(scr){
-				this.loadScript(scr);
-			}, this);
-		} else {
-			this.check();
-		}
-	},
-
 	toLoad: [],
 
-	loadScript: function(script){
-		if (this.scriptsState[script]){
-			if(this.toLoad.length) this.loadScript(this.toLoad.shift());
+	loadScript: function(script,last){
+		if (this.scriptsState[script] || script == 'None'){
+			if (last) this.check();
+			if (this.toLoad.length) this.loadScript(this.toLoad.shift(),last);
 			return;
 		} else if (this.loading){
 			this.toLoad.push(script);
@@ -231,7 +214,7 @@ var Depender = {
 		var finish = function(){
 			this.loading = false;
 			this.scriptLoaded(script);
-			if (this.toLoad.length) this.loadScript(this.toLoad.shift());
+			if (this.toLoad.length) this.loadScript(this.toLoad.shift(),last);
 		}.bind(this);
 		var error = function(){
 			this.log('could not load: ', scriptPath);
