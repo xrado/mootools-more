@@ -14,6 +14,7 @@ Script: Element.Delegation.js
 		Daniel Steigerwald
 
 */
+
 (function(){
 	
 	var match = /(.*?):relay\(([^)]+)\)$/,
@@ -48,10 +49,14 @@ Script: Element.Delegation.js
 
 		addEvent: function(type, fn){
 			var splitted = splitType(type);
+			var delegate = splitted.event;
 			if (splitted.selector){
+			splitted.event = (delegate == 'mouseenter') ? 'mouseover' : (delegate == 'mouseleave') ? 'mouseout' : splitted.event;
 				var monitors = this.retrieve('$moo:delegateMonitors', {});
 				if (!monitors[type]){
 					var monitor = function(e){
+						e.delegate = delegate;
+						e.selector = splitted.selector;
 						var el = check.call(this, e, splitted.selector);
 						if (el) this.fireEvent(type, [e, el], 0, el);
 					}.bind(this);
@@ -87,14 +92,14 @@ Script: Element.Delegation.js
 			var events = this.retrieve('events');
 			if (!events || !events[type]) return this;
 			
-			var e = args[0];
-			var el = args[1];
-			var relatedFrom = e.fromElement || e.relatedTarget;
-			var relatedTo = e.toElement || e.relatedTarget;
-			var typeSplit = type.split(':')[0];
-			
-			if(typeSplit == 'mouseover' && el.hasChild(relatedFrom)) return this;
-			if(typeSplit == 'mouseout' && relatedTo && $$(relatedTo.getParents(), relatedTo).contains(el)) return this;  			
+			var e = args[0],
+				el = args[1],
+				relatedFrom = e.fromElement || e.relatedTarget,
+				relatedTo = e.toElement || e.relatedTarget,
+				typeSplit = type.split(':')[0];
+
+			if(e.delegate == 'mouseenter' && el.hasChild(relatedFrom)) return this;
+			if(e.delegate == 'mouseleave' && relatedTo && $$(relatedTo.getParents(), relatedTo).contains(el)) return this;  			
 			
 			events[type].keys.each(function(fn){
 				fn.create({bind: bind || this, delay: delay, arguments: args})();
