@@ -30,6 +30,7 @@ Adds a semi-transparent overlay over a DOM element.
 * style - (*object*) if defined, will apply to the mask with [Element.setStyles][]. You can also style the layer by just defining a style for the layer class name (defaults to ".mask"). Default styles can be found in the Styles directory of the MooTools More library on github or downloaded on the More builder on MooTools.net.
 * maskMargins - (*boolean*) if *true* the mask will extend to the margins of the target. Defaults to *false*.
 * useIframeShim - (*boolean*) if true the mask will use [IframeShim][] to hide OS elements (select boxes, flash, etc) for IE6.
+* iframeShimOptions - (*object*) options passed to [IframeShim][].
 
 ### Events
 
@@ -42,6 +43,10 @@ Adds a semi-transparent overlay over a DOM element.
 
 	var myMask = new Mask();
 	var myMask = new Mask($('myElement'));
+
+### Styles
+
+The mask element is not styled, so if you don't add a css rule in your style sheets, it will be invisible. You can download the default styles here: [mask.css](http://github.com/mootools/mootools-more/raw/master/Styles/Interface/Mask/mask.css)
 
 Mask Method: toggle {#Mask:toggle}
 --------------------------------------
@@ -120,7 +125,7 @@ Reasserts the dimensions of the overlay layer. Note that this method is called w
 
 ### Syntax
 
-	myMask.destroy()
+	myMask.resize()
 
 ### Returns
 
@@ -138,7 +143,7 @@ Element Property: mask {#Element-Properties:mask}
 
 Sets a default [Mask][] instance for an Element.
 
-#### Syntax:
+#### Syntax
 
 	el.set('mask'[, options]);
 
@@ -214,6 +219,7 @@ Retrieves the "build-in"  instance of [Mask][] and calls its *hide* method.
 
 * (*element*) This Element
 
+[Mask]: #Mask
 [Mask.position]: #Mask:position
 [Spinner]: /more/Interface/Spinner
 [Options]: /core/Class/Class.Extras#Options

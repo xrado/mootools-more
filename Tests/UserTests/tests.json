@@ -16,7 +16,7 @@
 		"Element.Forms":['all'],
 		"Element.Shortcuts":['all'],
 		"Element.Pin":['all'],
-		"Element.Position":['all']
+		"Element.Position":['basic','scrolling']
 	},
 	"Forms": {
 		"Form.Validator.Inline":['all'],
@@ -29,8 +29,8 @@
 		"Fx.Accordion":['all'],
 		"Fx.Elements":['all'],
 		"Fx.Move":['all'],
-		"Fx.Reveal":['all'],
-		"Fx.Scroll":['all'],
+		"Fx.Reveal":['basic', 'toggle'],
+		"Fx.Scroll":['element', 'window'],
 		"Fx.Slide":['all'],
 		"Fx.SmoothScroll":['all'],
 		"Fx.Sort":['all']

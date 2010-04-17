@@ -1,12 +1,21 @@
 /*
-Script: Form.Validator.Extras.js
-	Additional validators for the Form.Validator class.
+---
 
-	License:
-		MIT-style license.
+script: Form.Validator.Extras.js
 
-	Authors:
-		Aaron Newton
+description: Additional validators for the Form.Validator class.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- /Form.Validator
+
+provides: [Form.Validator.Extras]
+
+...
 */
 Form.Validator.addAllThese([
 
@@ -162,7 +171,7 @@ Form.Validator.addAllThese([
 
 	['validate-cc-num', {
 		errorMsg: function(element){
-			var ccNum = element.get('value').ccNum.replace(/[^0-9]/g, '');
+			var ccNum = element.get('value').replace(/[^0-9]/g, '');
 			return Form.Validator.getMsg('creditcard').substitute({length: ccNum.length});
 		},
 		test: function(element){

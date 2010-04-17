@@ -1,12 +1,26 @@
 /*
-Script: Color.js
-	Class for creating and manipulating colors in JavaScript. Supports HSB -> RGB Conversions and vice versa.
+---
 
-	License:
-		MIT-style license.
+script: Color.js
 
-	Authors:
-		Valerio Proietti
+description: Class for creating and manipulating colors in JavaScript. Supports HSB -> RGB Conversions and vice versa.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- Core:1.2.4/Array
+- Core:1.2.4/String
+- Core:1.2.4/Number
+- Core:1.2.4/Hash
+- Core:1.2.4/Function
+- Core:1.2.4/$util
+
+provides: [Color]
+
+...
 */
 
 var Color = new Native({

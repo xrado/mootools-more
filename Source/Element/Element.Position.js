@@ -1,12 +1,22 @@
 /*
-Script: Element.Position.js
-	Extends the Element native object to include methods useful positioning elements relative to others.
+---
 
-	License:
-		MIT-style license.
+script: Element.Position.js
 
-	Authors:
-		Aaron Newton
+description: Extends the Element native object to include methods useful positioning elements relative to others.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Element.Dimensions
+- /Element.Measure
+
+provides: [Element.Position]
+
+...
 */
 
 (function(){
@@ -20,6 +30,8 @@ Element.implement({
 		if (options && ($defined(options.x) || $defined(options.y))) return original ? original.apply(this, arguments) : this;
 		$each(options||{}, function(v, k){ if (!$defined(v)) delete options[k]; });
 		options = $merge({
+			// minimum: { x: 0, y: 0 },
+			// maximum: { x: 0, y: 0},
 			relativeTo: document.body,
 			position: {
 				x: 'center', //left, center, right
@@ -76,17 +88,7 @@ Element.implement({
 				calc = rel == document.body ? window.getScroll() : rel.getPosition(),
 				top = calc.y, left = calc.x;
 
-		if (Browser.Engine.trident){
-			var scrolls = rel.getScrolls();
-			top += scrolls.y;
-			left += scrolls.x;
-		}
-
 		var dim = this.getDimensions({computeSize: true, styles:['padding', 'border','margin']});
-		if (options.ignoreMargins){
-			options.offset.x = options.offset.x - dim['margin-left'];
-			options.offset.y = options.offset.y - dim['margin-top'];
-		}
 		var pos = {},
 				prefY = options.offset.y,
 				prefX = options.offset.x,
@@ -113,7 +115,6 @@ Element.implement({
 				pos.y = top + ((rel == document.body ? winSize.y : rel.offsetHeight)/2) + prefY;
 				break;
 		}
-
 		if (options.edge){
 			var edgeOffset = {};
 
@@ -125,7 +126,7 @@ Element.implement({
 					edgeOffset.x = -dim.x-dim.computedRight-dim.computedLeft;
 					break;
 				default: //center
-					edgeOffset.x = -(dim.x/2);
+					edgeOffset.x = -(dim.totalWidth/2);
 					break;
 			}
 			switch(options.edge.y){
@@ -136,16 +137,23 @@ Element.implement({
 					edgeOffset.y = -dim.y-dim.computedTop-dim.computedBottom;
 					break;
 				default: //center
-					edgeOffset.y = -(dim.y/2);
+					edgeOffset.y = -(dim.totalHeight/2);
 					break;
 			}
-			pos.x+= edgeOffset.x;
-			pos.y+= edgeOffset.y;
+			pos.x += edgeOffset.x;
+			pos.y += edgeOffset.y;
 		}
 		pos = {
 			left: ((pos.x >= 0 || parentPositioned || options.allowNegative) ? pos.x : 0).toInt(),
 			top: ((pos.y >= 0 || parentPositioned || options.allowNegative) ? pos.y : 0).toInt()
 		};
+		var xy = {left: 'x', top: 'y'};
+		['minimum', 'maximum'].each(function(minmax) {
+			['left', 'top'].each(function(lr) {
+				var val = options[minmax] ? options[minmax][xy[lr]] : null;
+				if (val != null && pos[lr] < val) pos[lr] = val;
+			});
+		});
 		if (rel.getStyle('position') == 'fixed' || options.relFixedPosition){
 			var winScroll = window.getScroll();
 			pos.top+= winScroll.y;
@@ -156,7 +164,20 @@ Element.implement({
 			pos.top-= relScroll.y;
 			pos.left-= relScroll.x;
 		}
-
+		if (options.ignoreMargins) {
+			pos.left += (
+				options.edge.x == 'right' ? dim['margin-right'] : 
+				options.edge.x == 'center' ? -dim['margin-left'] + ((dim['margin-right'] + dim['margin-left'])/2) : 
+					- dim['margin-left']
+			);
+			pos.top += (
+				options.edge.y == 'bottom' ? dim['margin-bottom'] : 
+				options.edge.y == 'center' ? -dim['margin-top'] + ((dim['margin-bottom'] + dim['margin-top'])/2) : 
+					- dim['margin-top']
+			);
+		}
+		pos.left = Math.ceil(pos.left);
+		pos.top = Math.ceil(pos.top);
 		if (options.returnPos) return pos;
 		else this.setStyles(pos);
 		return this;

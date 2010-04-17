@@ -148,6 +148,7 @@ Evaluates an entire form against all the validators that are set up, firing even
 * evaluateFieldsOnChange - (*boolean*) whether to validate the fields when the change event fires; defaults to *true*
 * serial - (*boolean*) whether to validate other fields if one field fails validation unless the other fields' contents actually change (instead of onblur); defaults to *true*
 * ignoreHidden - (*boolean*) if *true* (the default), all fields that are not visible to the user (who are display:none or whose parents are display:none) are not validated.
+* ignoreDisabled - (*boolean*) if *true* (the default), all disabled fields are not validated.
 * warningPrefix - (*string*) prefix to be added to every warning; defaults to *"Warning: "*
 * errorPrefix - (*string*) prefix to be added to every error; defaults to *"Error: "*
 
@@ -168,12 +169,6 @@ Evaluates an entire form against all the validators that are set up, firing even
 ### Notes
 
 * [Form.Validator][] must be configured with [InputValidator][] objects (see below for details as well as a list of built-in validators). Each [InputValidator][] will be applied to any input that matches its className within the elements of the form that match the fieldSelectors option.
-* You can define a css class-name value called *msgPos* as the id of an element into which the validation errors for that input will be inserted. Example:
-
-		<input class="validate-email msgPos:'emailAdvice'">
-		<div id="emailAdvice"></div>
-
-
 * The preferred method for passing in validator properties (like the minimum length) is to append the value after the class name. This value will be passed through [JSON.decode][] so it can be a number, string, array representation, etc.
 
 		//the minimum length the user can supply is the integer 10
@@ -190,9 +185,14 @@ Evaluates an entire form against all the validators that are set up, firing even
 
 		//here we validate the date, but the validator gets access to
 		//the property defined for dateFormat (and any other property defined this way)
-		<input class="validate-date dateFormat:'%d/%m/%Y">
+		<input class="validate-date dateFormat:'%d/%m/%Y'">
 
 * Note that the property must be decodable by [JSON.decode][], so strings must have quotes, for example (single quotes are fine).
+* Note that string values that require spaces should use URL encoding, as spaces are the delimiters for css class names. Then your validator should url decode them from the validatorProps object when it uses them. Alternately, you can store this data directly on the input using element storage:
+
+		$('myinput').store('validatorProps', {
+			someValue: "I'm a string with spaces!"
+		});
 
 ### Using Warnings
 
@@ -443,45 +443,45 @@ Element Property: validator {#Element-Properties:validator}
 
 Sets and gets default options for the Form.Validator instance of an Element.
 
-### Setter:
+### Setter
 
-#### Syntax:
+#### Syntax
 
 	el.set('validator'[, options]);
 
-#### Arguments:
+#### Arguments
 
 * options - (*object*) the Form.Validator options.
 
-#### Returns:
+#### Returns
 
 * (*element*) This Element.
 
-#### Examples:
+#### Examples
 
 	el.set('validator', {serial: true});
 	el.validate();
 
-### Getter:
+### Getter
 
-#### Syntax:
+#### Syntax
 
 	el.get('validator', [options]);
 
-#### Arguments:
+#### Arguments
 
 1. property - (*string*) the Form.Validator property argument.
 2. options  - (*object*) the Form.Validator options.
 
-#### Returns:
+#### Returns
 
 * (*object*) The Element's internal Form.Validator instance.
 
-#### Examples:
+#### Examples
 
 	el.get('validator', {serial: true, evaluateFieldsOnBlur: false}).reset();
 
-### Notes:
+### Notes
 
 - When options are passed to either the setter or the getter, the instance will NOT be recreated. Its existing instance will have its options set with the new values.
 - As with the other Element shortcuts, the difference between a setter and a getter is that the getter returns the instance, while the setter returns the element (for chaining and initialization).

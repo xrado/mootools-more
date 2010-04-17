@@ -1,19 +1,33 @@
 /*
-Script: Mask.js
-	Creates a mask element to cover another.
+---
 
-	License:
-		MIT-style license.
+script: Mask.js
 
-	Authors:
-		Aaron Newton
+description: Creates a mask element to cover another.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Options
+- Core:1.2.4/Events
+- Core:1.2.4/Element.Event
+- /Class.Binds
+- /Element.Position
+- /IframeShim
+
+provides: [Mask]
+
+...
 */
 
 var Mask = new Class({
 
 	Implements: [Options, Events],
 
-	Binds: ['resize'],
+	Binds: ['position'],
 
 	options: {
 		// onShow: $empty,
@@ -30,12 +44,13 @@ var Mask = new Class({
 		style: {},
 		'class': 'mask',
 		maskMargins: false,
-		useIframeShim: true
+		useIframeShim: true,
+		iframeShimOptions: {}
 	},
 
 	initialize: function(target, options){
-		this.target = document.id(target) || document.body;
-		this.target.store('mask', this);
+		this.target = document.id(target) || document.id(document.body);
+		this.target.store('Mask', this);
 		this.setOptions(options);
 		this.render();
 		this.inject();
@@ -67,7 +82,7 @@ var Mask = new Class({
 		target = target || this.options.inject ? this.options.inject.target : '' || this.target;
 		this.element.inject(target, where);
 		if (this.options.useIframeShim) {
-			this.shim = new IframeShim(this.element);
+			this.shim = new IframeShim(this.element, this.options.iframeShimOptions);
 			this.addEvents({
 				show: this.shim.show.bind(this.shim),
 				hide: this.shim.hide.bind(this.shim),
@@ -80,6 +95,7 @@ var Mask = new Class({
 		this.resize(this.options.width, this.options.height);
 		this.element.position({
 			relativeTo: this.target,
+			position: 'topLeft',
 			ignoreMargins: !this.options.maskMargins,
 			ignoreScroll: this.target == document.body
 		});
@@ -92,17 +108,21 @@ var Mask = new Class({
 		};
 		if (this.options.maskMargins) opt.styles.push('margin');
 		var dim = this.target.getComputedSize(opt);
+		if (this.target == document.body) {
+			var win = window.getSize();
+			if (dim.totalHeight < win.y) dim.totalHeight = win.y;
+			if (dim.totalWidth < win.x) dim.totalWidth = win.x;
+		}
 		this.element.setStyles({
-			width:($pick(x, dim.totalWidth)),
-			height:($pick(y, dim.totalHeight))
+			width: $pick(x, dim.totalWidth, dim.x),
+			height: $pick(y, dim.totalHeight, dim.y)
 		});
 		return this;
 	},
 
 	show: function(){
 		if (!this.hidden) return this;
-		this.target.addEvent('resize', this.resize);
-		if (this.target != document.body) document.id(document.body).addEvent('resize', this.resize);
+		window.addEvent('resize', this.position);
 		this.position();
 		this.showMask.apply(this, arguments);
 		return this;
@@ -115,10 +135,10 @@ var Mask = new Class({
 	},
 
 	hide: function(){
-		if (this.options.destroyOnHide) return this.destroy();
 		if (this.hidden) return this;
-		this.target.removeEvent('resize', this.resize);
+		window.removeEvent('resize', this.position);
 		this.hideMask.apply(this, arguments);
+		if (this.options.destroyOnHide) return this.destroy();
 		return this;
 	},
 

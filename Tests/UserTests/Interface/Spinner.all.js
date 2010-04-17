@@ -43,6 +43,27 @@
 				});
 				req.send();
 			}
+		},
+		{
+			title: "Spinner with Request (Element.load)",
+			description: "Retrieves content via ajax and automatically applies the Spinner to it.",
+			verify: "Did the Spinner show up until the ajax finished and updated the content?",
+			before: function(){
+				$('foo2').set('html', 'This content will be replaced w/ ajax').set('load', {
+					url: 'UserTests/Request/simple.php?sleep=1',
+					method: 'get',
+					useSpinner: true
+				}).load();
+			}
+		},
+		{
+			title: "Spinner with Scroll Offsets",
+			description: "Positions Spinner correctly based on scroll offsets",
+			verify: "Did the Spinner align correctly with content?",
+			before: function(){
+				$('foo3').scrollTo(0,300);
+				$('foo3').spin({message: 'testing....'});
+			}
 		}
 	],
 	otherScripts: ["Request.HTML"]

@@ -1,12 +1,24 @@
 /*
-Script: Scroller.js
-	Class which scrolls the contents of any Element (including the window) when the mouse reaches the Element's boundaries.
+---
 
-	License:
-		MIT-style license.
+script: Scroller.js
 
-	Authors:
-		Valerio Proietti
+description: Class which scrolls the contents of any Element (including the window) when the mouse reaches the Element's boundaries.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- Core:1.2.4/Events
+- Core:1.2.4/Options
+- Core:1.2.4/Element.Event
+- Core:1.2.4/Element.Dimensions
+
+provides: [Scroller]
+
+...
 */
 
 var Scroller = new Class({
@@ -25,7 +37,8 @@ var Scroller = new Class({
 	initialize: function(element, options){
 		this.setOptions(options);
 		this.element = document.id(element);
-		this.listener = ($type(this.element) != 'element') ? document.id(this.element.getDocument().body) : this.element;
+		this.docBody = document.id(this.element.getDocument().body);
+		this.listener = ($type(this.element) != 'element') ?  this.docBody : this.element;
 		this.timer = null;
 		this.bound = {
 			attach: this.attach.bind(this),
@@ -36,16 +49,17 @@ var Scroller = new Class({
 
 	start: function(){
 		this.listener.addEvents({
-			mouseenter: this.bound.attach,
-			mouseleave: this.bound.detach
+			mouseover: this.bound.attach,
+			mouseout: this.bound.detach
 		});
 	},
 
 	stop: function(){
 		this.listener.removeEvents({
-			mouseenter: this.bound.attach,
-			mouseleave: this.bound.detach
+			mouseover: this.bound.attach,
+			mouseout: this.bound.detach
 		});
+		this.detach();
 		this.timer = $clear(this.timer);
 	},
 
@@ -66,14 +80,15 @@ var Scroller = new Class({
 	scroll: function(){
 		var size = this.element.getSize(), 
 			scroll = this.element.getScroll(), 
-			pos = this.element.getOffsets(), 
+			pos = this.element != this.docBody ? this.element.getOffsets() : {x: 0, y:0}, 
 			scrollSize = this.element.getScrollSize(), 
 			change = {x: 0, y: 0};
 		for (var z in this.page){
-			if (this.page[z] < (this.options.area + pos[z]) && scroll[z] != 0)
+			if (this.page[z] < (this.options.area + pos[z]) && scroll[z] != 0) {
 				change[z] = (this.page[z] - this.options.area - pos[z]) * this.options.velocity;
-			else if (this.page[z] + this.options.area > (size[z] + pos[z]) && scroll[z] + size[z] != scrollSize[z])
+			} else if (this.page[z] + this.options.area > (size[z] + pos[z]) && scroll[z] + size[z] != scrollSize[z]) {
 				change[z] = (this.page[z] - size[z] + this.options.area - pos[z]) * this.options.velocity;
+			}
 		}
 		if (change.y || change.x) this.fireEvent('change', [scroll.x + change.x, scroll.y + change.y]);
 	}

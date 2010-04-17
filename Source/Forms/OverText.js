@@ -1,12 +1,27 @@
 /*
-Script: OverText.js
-	Shows text over an input that disappears when the user clicks into it. The text remains hidden if the user adds a value.
+---
 
-	License:
-		MIT-style license.
+script: OverText.js
 
-	Authors:
-		Aaron Newton
+description: Shows text over an input that disappears when the user clicks into it. The text remains hidden if the user adds a value.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Options
+- Core:1.2.4/Events
+- Core:1.2.4/Element.Event
+- /Class.Binds
+- /Class.Occlude
+- /Element.Position
+- /Element.Shortcuts
+
+provides: [OverText]
+
+...
 */
 
 var OverText = new Class({
@@ -30,7 +45,8 @@ var OverText = new Class({
 			}
 		},
 		poll: false,
-		pollInterval: 250
+		pollInterval: 250,
+		wrap: false
 	},
 
 	property: 'OverText',
@@ -56,22 +72,68 @@ var OverText = new Class({
 			'class': 'overTxtLabel',
 			styles: {
 				lineHeight: 'normal',
-				position: 'absolute'
+				position: 'absolute',
+				cursor: 'text'
 			},
 			html: val,
 			events: {
-				click: this.hide.pass(true, this)
+				click: this.hide.pass(this.options.element == 'label', this)
 			}
 		}).inject(this.element, 'after');
-		if (this.options.element == 'label') this.text.set('for', this.element.get('id'));
+		if (this.options.element == 'label') {
+			if (!this.element.get('id')) this.element.set('id', 'input_' + new Date().getTime());
+			this.text.set('for', this.element.get('id'));
+		}
+
+		if (this.options.wrap) {
+			this.textHolder = new Element('div', {
+				styles: {
+					lineHeight: 'normal',
+					position: 'relative'
+				},
+				'class':'overTxtWrapper'
+			}).adopt(this.text).inject(this.element, 'before');
+		}
+
+		return this.enable();
+	},
+
+	destroy: function(){
+		this.element.eliminate('OverTextDiv');
+		this.disable();
+		this.text.destroy();
+		if (this.textHolder) this.textHolder.destroy();
+		return this;
+	},
+
+	disable: function(){
+		this.element.removeEvents({
+			focus: this.focus,
+			blur: this.assert,
+			change: this.assert
+		});
+		window.removeEvent('resize', this.reposition);
+		this.hide(true, true);
+		return this;
+	},
+
+	enable: function(){
 		this.element.addEvents({
 			focus: this.focus,
 			blur: this.assert,
 			change: this.assert
-		}).store('OverTextDiv', this.text);
-		window.addEvent('resize', this.reposition.bind(this));
+		});
+		window.addEvent('resize', this.reposition);
 		this.assert(true);
 		this.reposition();
+		return this;
+	},
+
+	wrap: function(){
+		if (this.options.element == 'label') {
+			if (!this.element.get('id')) this.element.set('id', 'input_' + new Date().getTime());
+			this.text.set('for', this.element.get('id'));
+		}
 	},
 
 	startPolling: function(){
@@ -107,10 +169,12 @@ var OverText = new Class({
 			this.text.hide();
 			this.fireEvent('textHide', [this.text, this.element]);
 			this.pollingPaused = true;
-			try {
-				if (!suppressFocus) this.element.fireEvent('focus');
-				this.element.focus();
-			} catch(e){} //IE barfs if you call focus on hidden elements
+			if (!suppressFocus){
+				try {
+					this.element.fireEvent('focus');
+					this.element.focus();
+				} catch(e){} //IE barfs if you call focus on hidden elements
+			}
 		}
 		return this;
 	},

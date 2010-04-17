@@ -1,13 +1,22 @@
 /*
-Script: Date.Extras.js
-	Extends the Date native object to include extra methods (on top of those in Date.js).
+---
 
-	License:
-		MIT-style license.
+script: Date.Extras.js
 
-	Authors:
-		Aaron Newton
+description: Extends the Date native object to include extra methods (on top of those in Date.js).
 
+license: MIT-style license
+
+authors:
+- Aaron Newton
+- Scott Kyle
+
+requires:
+- /Date
+
+provides: [Date.Extras]
+
+...
 */
 
 Date.implement({
@@ -83,7 +92,7 @@ Date.defineParsers(
 
 	{
 		// "today", "tomorrow", "yesterday"
-		re: /^tod|tom|yes/i,
+		re: /^(?:tod|tom|yes)/i,
 		handler: function(bits){
 			var d = new Date().clearTime();
 			switch(bits[0]){

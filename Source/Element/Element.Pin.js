@@ -1,12 +1,24 @@
 /*
-Script: Element.Pin.js
-	Extends the Element native object to include the pin method useful for fixed positioning for elements.
+---
 
-	License:
-		MIT-style license.
+script: Element.Pin.js
 
-	Authors:
-		Aaron Newton
+description: Extends the Element native object to include the pin method useful for fixed positioning for elements.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Element.Event
+- Core:1.2.4/Element.Dimensions
+- Core:1.2.4/Element.Style
+- /MooTools.More
+
+provides: [Element.Pin]
+
+...
 */
 
 (function(){
@@ -43,9 +55,10 @@ Script: Element.Pin.js
 							position: 'absolute',
 							top: p.y,
 							left: p.x
-						});
+						}).addClass('isPinned');
 						this.store('scrollFixer', (function(){
 							if (this.retrieve('pinned'))
+								var scroll = window.getScroll();
 								this.setStyles({
 									top: pos.top.toInt() + scroll.y,
 									left: pos.left.toInt() + scroll.x
@@ -77,13 +90,13 @@ Script: Element.Pin.js
 						left: p.x
 					};
 				}
-				this.setStyles($merge(reposition, {position: 'absolute'}));
+				this.setStyles($merge(reposition, {position: 'absolute'})).removeClass('isPinned');
 			}
-			return this.addClass('isPinned');
+			return this;
 		},
 
 		unpin: function(){
-			return this.pin(false).removeClass('isPinned');
+			return this.pin(false);
 		},
 
 		togglepin: function(){

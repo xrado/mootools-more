@@ -3,7 +3,7 @@ Native: Array {#Array}
 
 A collection of useful methods to extend Arrays.
 
-### See Also:
+### See Also
 
 * [Array][]
 
@@ -25,6 +25,7 @@ Calls Math.min on the array and returns its lowest value.
 ### Returns
 
 * (*number*) the lowest number in the array
+
 
 Array Method: max {#Array:max}
 -------------------------------------
@@ -61,6 +62,27 @@ Calculates the average value of the array
 ### Returns
 
 * (*number*) the highest number in the array
+
+Array Method: shuffle {#Array:shuffle}
+-------------------------------------
+
+Randomizes the array (altering it).
+
+### Syntax
+
+	myArray.shuffle();
+
+### Example
+
+	[1, 2, 3].shuffle();
+
+### Returns
+
+* (*number*) the array.
+
+### Note
+
+Calling this method alters the array; it doesn't just return a new array with the same contents shuffled. It does, however, return itself.
 
 Array Method: sum {#Array:sum}
 -------------------------------------

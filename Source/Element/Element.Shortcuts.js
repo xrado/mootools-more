@@ -1,13 +1,22 @@
 /*
-Script: Element.Shortcuts.js
-	Extends the Element native object to include some shortcut methods.
+---
 
-	License:
-		MIT-style license.
+script: Element.Shortcuts.js
 
-	Authors:
-		Aaron Newton
+description: Extends the Element native object to include some shortcut methods.
 
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Element.Style
+- /MooTools.More
+
+provides: [Element.Shortcuts]
+
+...
 */
 
 Element.implement({
@@ -17,7 +26,8 @@ Element.implement({
 	},
 
 	isVisible: function(){
-		var w = this.offsetWidth, h = this.offsetHeight;
+		var w = this.offsetWidth,
+			h = this.offsetHeight;
 		return (w == 0 && h == 0) ? false : (w > 0 && h > 0) ? true : this.isDisplayed();
 	},
 
@@ -28,15 +38,15 @@ Element.implement({
 	hide: function(){
 		var d;
 		try {
-			// IE fails here if the element is not in the dom
-			if ((d = this.getStyle('display')) == 'none') d = null;
+			//IE fails here if the element is not in the dom
+			d = this.getStyle('display');
 		} catch(e){}
-		
-		return this.store('originalDisplay', d || 'block').setStyle('display', 'none');
+		return this.store('originalDisplay', d || '').setStyle('display', 'none');
 	},
 
 	show: function(display){
-		return this.setStyle('display', display || this.retrieve('originalDisplay') || 'block');
+		display = display || this.retrieve('originalDisplay') || 'block';
+		return this.setStyle('display', (display == 'none') ? 'block' : display);
 	},
 
 	swapClass: function(remove, add){

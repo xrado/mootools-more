@@ -1,13 +1,21 @@
 /*
-Script: Date.Catalan.US.js
-	Date messages for Catalan.
+---
 
-	License:
-		MIT-style license.
+script: Date.Catalan.js
 
-	Authors:
-		Alfons Sanchez
+description: Date messages for Catalan.
 
+license: MIT-style license
+
+authors:
+- Alfons Sanchez
+
+requires:
+- /Lang
+
+provides: [Date.Catalan]
+
+...
 */
 
 MooTools.lang.set('ca-CA', 'Date', {

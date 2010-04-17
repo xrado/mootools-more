@@ -1,12 +1,32 @@
 /*
-Script: Form.Validator.js
-	A css-class based form validation system.
+---
 
-	License:
-		MIT-style license.
+script: Form.Validator.js
 
-	Authors:
-		Aaron Newton
+description: A css-class based form validation system.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Options
+- Core:1.2.4/Events
+- Core:1.2.4/Selectors
+- Core:1.2.4/Element.Event
+- Core:1.2.4/Element.Style
+- Core:1.2.4/JSON
+- /Lang
+- /Class.Binds
+- /Date 
+- /Element.Forms
+- /Form.Validator.English
+- /Element.Shortcuts
+
+provides: [Form.Validator, InputValidator, FormValidator.BaseValidators]
+
+...
 */
 if (!window.Form) window.Form = {};
 
@@ -94,6 +114,7 @@ Form.Validator = new Class({
 		onElementFail: $empty(field, validatorsFailed) */
 		fieldSelectors: 'input, select, textarea',
 		ignoreHidden: true,
+		ignoreDisabled: true,
 		useTitles: false,
 		evaluateOnSubmit: true,
 		evaluateFieldsOnBlur: true,
@@ -204,19 +225,15 @@ Form.Validator = new Class({
 	},
 
 	test: function(className, field, warn){
-		var validator = this.getValidator(className);
 		field = document.id(field);
-		if (field.hasClass('ignoreValidation')) return true;
+		if((this.options.ignoreHidden && !field.isVisible()) || (this.options.ignoreDisabled && field.get('disabled'))) return true;
+		var validator = this.getValidator(className);
 		warn = $pick(warn, false);
 		if (field.hasClass('warnOnly')) warn = true;
-		var isValid = validator ? validator.test(field) : true;
-		if (validator && this.isVisible(field)) this.fireEvent('elementValidate', [isValid, field, className, warn]);
+		var isValid = field.hasClass('ignoreValidation') || (validator ? validator.test(field) : true);
+		if (validator && field.isVisible()) this.fireEvent('elementValidate', [isValid, field, className, warn]);
 		if (warn) return true;
 		return isValid;
-	},
-
-	isVisible : function(field){
-		return this.options.ignoreHidden || field.isVisible();
 	},
 
 	resetField: function(field){
@@ -437,7 +454,7 @@ Form.Validator.addAllThese([
 	['validate-one-required', {
 		errorMsg: Form.Validator.getMsg.pass('oneRequired'),
 		test: function(element, props){
-			var p = document.id(props['validate-one-required']) || element.getParent();
+			var p = document.id(props['validate-one-required']) || element.getParent(props['validate-one-required']);
 			return p.getElements('input').some(function(el){
 				if (['checkbox', 'radio'].contains(el.get('type'))) return el.get('checked');
 				return el.get('value');

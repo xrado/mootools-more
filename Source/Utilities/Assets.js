@@ -1,12 +1,22 @@
 /*
-Script: Assets.js
-	Provides methods to dynamically load JavaScript, CSS, and Image files into the document.
+---
 
-	License:
-		MIT-style license.
+script: Assets.js
 
-	Authors:
-		Valerio Proietti
+description: Provides methods to dynamically load JavaScript, CSS, and Image files into the document.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- Core:1.2.4/Element.Event
+- /MooTools.More
+
+provides: [Assets]
+
+...
 */
 
 var Asset = {
@@ -17,11 +27,19 @@ var Asset = {
 			document: document,
 			check: $lambda(true)
 		}, properties);
-
+		
+		if (properties.onLoad) {
+			properties.onload = properties.onLoad;
+			delete properties.onLoad;
+		}
 		var script = new Element('script', {src: source, type: 'text/javascript'});
 
-		var load = properties.onload.bind(script), check = properties.check, doc = properties.document;
-		delete properties.onload; delete properties.check; delete properties.document;
+		var load = properties.onload.bind(script), 
+			check = properties.check, 
+			doc = properties.document;
+		delete properties.onload;
+		delete properties.check;
+		delete properties.document;
 
 		script.addEvents({
 			load: load,
@@ -40,8 +58,18 @@ var Asset = {
 	},
 
 	css: function(source, properties){
+		var onload = properties.onload || properties.onLoad;
+		if (onload) {
+			properties.events = properties.events || {};
+			properties.events.load = onload;
+			delete properties.onload;
+			delete properties.onLoad;
+		}
 		return new Element('link', $merge({
-			rel: 'stylesheet', media: 'screen', type: 'text/css', href: source
+			rel: 'stylesheet',
+			media: 'screen',
+			type: 'text/css',
+			href: source
 		}, properties)).inject(document.head);
 	},
 
@@ -55,6 +83,11 @@ var Asset = {
 		var element = document.id(image) || new Element('img');
 		['load', 'abort', 'error'].each(function(name){
 			var type = 'on' + name;
+			var cap = name.capitalize();
+			if (properties['on' + cap]) {
+				properties[type] = properties['on' + cap];
+				delete properties['on' + cap];
+			}
 			var event = properties[type];
 			delete properties[type];
 			image[type] = function(){

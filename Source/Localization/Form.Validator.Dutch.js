@@ -1,13 +1,21 @@
 /*
-Script: Form.Validator.Dutch.js
-	Form.Validator messages in Dutch.
+---
 
-	License:
-		MIT-style license.
+script: Form.Validator.Dutch.js
 
-	Authors:
-		Lennart Pilon
+description: Form.Validator messages in Dutch.
 
+license: MIT-style license
+
+authors:
+- Lennart Pilon
+
+requires:
+- /Lang
+
+provides: [Form.Validator.Dutch]
+
+...
 */
 
 MooTools.lang.set('nl-NL', 'Form.Validator', {

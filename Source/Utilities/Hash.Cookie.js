@@ -1,13 +1,24 @@
 /*
-Script: Hash.Cookie.js
-	Class for creating, reading, and deleting Cookies in JSON format.
+---
 
-	License:
-		MIT-style license.
+script: Hash.Cookie.js
 
-	Authors:
-		Valerio Proietti
-		Aaron Newton
+description: Class for creating, reading, and deleting Cookies in JSON format.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Cookie
+- Core:1.2.4/JSON
+- /MooTools.More
+
+provides: [Hash.Cookie]
+
+...
 */
 
 Hash.Cookie = new Class({

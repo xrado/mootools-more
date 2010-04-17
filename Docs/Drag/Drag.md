@@ -3,7 +3,7 @@ Class: Drag {#Drag}
 
 Enables the modification of two CSS properties of an Element based on the position of the mouse while the mouse button is down.
 
-### Implements:
+### Implements
 
 [Events][], [Chain][], [Options][]
 
@@ -11,27 +11,29 @@ Enables the modification of two CSS properties of an Element based on the positi
 Drag Method: constructor {#Drag:constructor}
 --------------------------------------------
 
-### Syntax:
+### Syntax
 
 	var myDragInstance = new Drag(el[, options]);
 
-### Arguments:
+### Arguments
 
 1. el      - (*element*) The Element to apply the transformations to.
 2. options - (*object*, optional) The options object.
 
-### Options:
+### Options
 
-* grid      - (*integer*: defaults to false) Distance in pixels for snap-to-grid dragging.
-* handle    - (*element*: defaults to the element passed in) The Element to act as the handle for the draggable element.
-* invert    - (*boolean*: defaults to false) Whether or not to invert the values reported on start and drag.
-* limit     - (*object*: defaults to false) An object with x and y dimensions used to limit the movement of the Element.
-* modifiers - (*object*: defaults to {'x': 'left', 'y': 'top'}) An object with x and y properties used to indicate the CSS modifiers (i.e. 'left').
-* snap      - (*integer*: defaults to 6) The distance to drag before the Element starts to respond to the drag.
-* style     - (*boolean*: defaults to true) Whether or not to set the modifier as a style property of the element.
-* unit      - (*string*: defaults to 'px') A string indicating the CSS unit to append to all integer values.
+* grid            - (*integer*: defaults to false) Distance in pixels for snap-to-grid dragging.
+* handle          - (*element*: defaults to the element passed in) The Element to act as the handle for the draggable element.
+* invert          - (*boolean*: defaults to false) Whether or not to invert the values reported on start and drag.
+* limit           - (*object*: defaults to false) An object with x and y dimensions used to limit the movement of the Element.
+* modifiers       - (*object*: defaults to {'x': 'left', 'y': 'top'}) An object with x and y properties used to indicate the CSS modifiers (i.e. 'left').
+* snap            - (*integer*: defaults to 6) The distance to drag before the Element starts to respond to the drag.
+* style           - (*boolean*: defaults to true) Whether or not to set the modifier as a style property of the element.
+* unit            - (*string*: defaults to 'px') A string indicating the CSS unit to append to all integer values.
+* preventDefault   - (*boolean*: defaults to false) Calls preventDefault on the event while dragging. See [Event:preventDefault][]
+* stopPropagation - (*boolean*: defaults to false) Prevents the event from "bubbling" up in the DOM tree. See [Event:stopPropagation][]
 
-### Events:
+### Events
 
 * beforeStart - Executed before the Drag instance attaches the events. Receives the dragged element as an argument.
 * start       - Executed when the user starts to drag (on mousedown). Receives the dragged element as an argument.
@@ -40,7 +42,7 @@ Drag Method: constructor {#Drag:constructor}
 * complete    - Executed when the user completes the drag. Receives the dragged element and the event as arguments.
 * cancel      - Executed when the user has cancelled the drag. Receives the dragged element as an argument.
 
-### Examples:
+### Examples
 
 	var myDrag = new Drag('myDraggable', {
 		snap: 0,
@@ -59,11 +61,11 @@ Drag Method: constructor {#Drag:constructor}
 		modifiers: {x: 'scrollLeft', y: 'scrollTop'}
 	});
 
-### Notes:
+### Notes
 
 - Drag requires the page to be in [Standards Mode](http://hsivonen.iki.fi/doctype/).
 
-### See Also:
+### See Also
 
 - [W3Schools: CSS Units][]
 
@@ -74,15 +76,15 @@ Drag Method: attach {#Drag:attach}
 
 Attaches the mouse listener to the handle, causing the Element to be draggable.
 
-### Syntax:
+### Syntax
 
 	myDrag.attach();
 
-### Returns:
+### Returns
 
 * (*object*) This Drag instance.
 
-### Examples:
+### Examples
 
 	var myDrag = new Drag('myElement').detach(); //The Element can't be dragged.
 	$('myActivator').addEvent('click', function(){
@@ -90,7 +92,7 @@ Attaches the mouse listener to the handle, causing the Element to be draggable.
 		myDrag.attach();
 	});
 
-### See Also:
+### See Also
 
 - [$][], [Element:makeDraggable][], [Drag:detach](#Drag:detach), [Element:addEvent][]
 
@@ -101,15 +103,15 @@ Drag Method: detach {#Drag:detach}
 
 Detaches the mouse listener from the handle, preventing the Element from being dragged.
 
-### Syntax:
+### Syntax
 
 	myDrag.detach();
 
-### Returns:
+### Returns
 
 * (*object*) This Drag instance.
 
-### Examples:
+### Examples
 
 	var myDrag = new Drag('myElement');
 	$('myDeactivator').addEvent('click', function(){
@@ -117,7 +119,7 @@ Detaches the mouse listener from the handle, preventing the Element from being d
 		myDrag.detach();
 	});
 
-### See Also:
+### See Also
 
 - [$][], [Element:makeDraggable][], [Element:addEvent][]
 
@@ -128,7 +130,7 @@ Drag Method: stop {#Drag:stop}
 
 Stops (removes) all attached events from the Drag instance. If the event is passed, it executes the 'complete' Event.
 
-### Syntax:
+### Syntax
 
 	myDrag.stop([event]);
 
@@ -136,7 +138,7 @@ Stops (removes) all attached events from the Drag instance. If the event is pass
 
 1. event - (*event*) the Event that is fired (typically by mouseup). This is passed along to the 'complete' Event in addition to the element that was dragged. If you pass along any truth-y value (i.e. not *false*, *zero*, etc) the 'complete' event will be fired and that value will be passed to the 'complete' event.
 
-### Examples:
+### Examples
 
 	var myDrag = new Drag('myElement', {
 		onSnap: function(){
@@ -163,19 +165,19 @@ Element Method: makeResizable {#Element:makeResizable}
 
 Adds drag-to-resize behavior to an Element using supplied options.
 
-### Syntax:
+### Syntax
 
 	var myResize = myElement.makeResizable([options]);
 
-### Arguments:
+### Arguments
 
-1. options - (*object*, optional) See [Drag][] for acceptable options.
+1. options - (*object*, optional) See [Drag][#Drag] for acceptable options.
 
-### Returns:
+### Returns
 
 * (*object*) The Drag instance that was created.
 
-### Examples:
+### Examples
 
 	var myResize = $('myElement').makeResizable({
 		onComplete: function(){
@@ -183,7 +185,7 @@ Adds drag-to-resize behavior to an Element using supplied options.
 		}
 	});
 
-### See Also:
+### See Also
 
 - [Drag](#Drag)
 
@@ -193,6 +195,8 @@ Adds drag-to-resize behavior to an Element using supplied options.
 [Element:addEvent]: /core/Element/Element.Event/#Element:addEvent
 [Element:makeDraggable]: /more/Drag/Drag.Move/#Element:makeDraggable
 [Events]: /core/Class/Class.Extras#Events
+[Event:preventDefault]: /core/Native/Event#Event:prevenDefault
+[Event:stopPropagation]: /core/Native/Event#Event:stopPropagation
 [Chain]: /core/Class/Class.Extras#Chain
 [Options]: /core/Class/Class.Extras#Options
 [W3Schools: CSS Units]: http://www.w3schools.com/css/css_units.asp

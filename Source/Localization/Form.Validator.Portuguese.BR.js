@@ -1,13 +1,22 @@
 /*
-Script: Form.Validator.Portuguese.BR.js
-	Form.Validator messages in Portuguese-BR.
+---
 
-	License:
-		MIT-style license.
+script: Form.Validator.Portuguese.BR.js
 
-	Authors:
-		Fábio Miranda Costa
+description: Form.Validator messages in Portuguese-BR.
 
+license: MIT-style license
+
+authors:
+- Fábio Miranda Costa
+
+requires:
+- /Lang
+- /Form.Validator.Portuguese
+
+provides: [Form.Validator.Portuguese.BR]
+
+...
 */
 
 MooTools.lang.set('pt-BR', 'Form.Validator', {
@@ -31,7 +40,7 @@ MooTools.lang.set('pt-BR', 'Form.Validator', {
 
 	//Form.Validator.Extras
 
-	noSpace: 'Não se pode digitar espaços neste campo.',
+	noSpace: 'Não é possível digitar espaços neste campo.',
 	reqChkByNode: 'Não foi selecionado nenhum item.',
 	requiredChk: 'Este campo é obrigatório.',
 	reqChkByName: 'Por favor digite um {label}.',
@@ -42,6 +51,7 @@ MooTools.lang.set('pt-BR', 'Form.Validator', {
 	afterDate: 'A data deve ser igual ou posterior a {label}.',
 	beforeDate: 'A data deve ser igual ou anterior a {label}.',
 	startMonth: 'Por favor selecione uma data inicial.',
-	sameMonth: 'Estas duas datas devem ter o mesmo mês - você deve modificar uma das duas.'
+	sameMonth: 'Estas duas datas devem ter o mesmo mês - você deve modificar uma das duas.',
+	creditcard: 'O número do cartão de crédito informado é inválido. Por favor verifique o valor e tente novamente. {length} números informados.'
 
 });

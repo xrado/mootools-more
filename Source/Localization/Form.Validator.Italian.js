@@ -1,13 +1,22 @@
 /*
-Script: Form.Validator.Italian.js
-		Form.Validator messages in Italian.
+---
 
-	License:
-		MIT-style license.
+script: Form.Validator.Italian.js
 
-	Authors:
-		Leonardo Laureti
-		Andrea Novero
+description: Form.Validator messages in Italian.
+
+license: MIT-style license
+
+authors:
+- Leonardo Laureti
+- Andrea Novero
+
+requires:
+- /Lang
+
+provides: [Form.Validator.Italian]
+
+...
 */
  
 MooTools.lang.set('it-IT', 'Form.Validator', {

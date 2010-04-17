@@ -14,7 +14,7 @@ Extends the Date native to include more powerful parsing and formatting function
 * Aaron Newton - aaron [dot] newton [at] cnet [dot] com
 * Scott Kyle - scott [at] appden.com; http://appden.com
 
-### License:
+### License
 
 MIT-style license
 
@@ -289,7 +289,7 @@ Outputs the date into a specific format.
 
 1. format - (*string*) a string format for the output. Use the keys below with percent signs to get a desired output. Defaults to "%x %X", which renders "12/31/2007 03:45PM"
 
-### Keys:
+### Keys
 * a - short day ("Mon", "Tue")
 * A - full day ("Monday")
 * b - short month ("Jan", "Feb")
@@ -314,7 +314,7 @@ Outputs the date into a specific format.
 * Z - the time zone ("GMT")
 * % - returns % (example: %y%% = 07%)
 
-### Shortcuts:
+### Shortcuts
 
 These shortcuts are NOT preceded by the percent sign.
 
@@ -371,6 +371,7 @@ Parses a string to a date. In the examples below, parsing works with dates using
 	Date.parse('10.12.1982 22:45:00') //"Tue Oct 12 1982 22:45:00 GMT-0700 (Pacific Daylight Time)"
 	Date.parse('2007-06-08 16:34:52') //"Fri Jun 08 2007 16:34:52 GMT-0700 (Pacific Daylight Time)"
 	Date.parse('2007-06-08T16:34:52+0200') //"Fri Jun 08 2007 07:34:52 GMT-0700 (Pacific Daylight Time)"
+	Date.parse('Thu Oct 22 08:11:23 +0000 2009') //Thu Oct 12 2009 08:11:23 GMT (Greenwich Mean Time)
 	
 	Date.parse('1st') //"Sat Dec 01 2007 00:00:00 GMT-0800 (Pacific Standard Time)"
 	Date.parse('14th October') //"Sun Oct 14 2007 00:00:00 GMT-0700 (Pacific Daylight Time)"

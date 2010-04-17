@@ -1,13 +1,21 @@
 /*
-Script: Form.Validator.Russian.js
-	Form.Validator messages in Russian (utf-8 and cp1251).
+---
 
-	License:
-		MIT-style license.
+script: Form.Validator.Russian.js
 
-	Authors:
-		Chernodarov Egor
+description: Form.Validator messages in Russian (utf-8 and cp1251).
 
+license: MIT-style license
+
+authors:
+- Chernodarov Egor
+
+requires:
+- /Lang
+
+provides: [Form.Validator.Russian]
+
+...
 */
 
 MooTools.lang.set('ru-RU-unicode', 'Form.Validator', {

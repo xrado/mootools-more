@@ -1,12 +1,26 @@
 /*
-Script: IframeShim.js
-	Defines IframeShim, a class for obscuring select lists and flash objects in IE.
+---
 
-	License:
-		MIT-style license.
+script: IframeShim.js
 
-	Authors:
-		Aaron Newton
+description: Defines IframeShim, a class for obscuring select lists and flash objects in IE.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Element.Event
+- Core:1.2.4/Element.Style
+- Core:1.2.4/Options 
+- Core:1.2.4/Events
+- /Element.Position
+- /Class.Occlude
+
+provides: [IframeShim]
+
+...
 */
 
 var IframeShim = new Class({
@@ -62,7 +76,7 @@ var IframeShim = new Class({
 				this[this.options.display ? 'show' : 'hide']();
 				this.fireEvent('inject');
 			}).bind(this);
-			if (this.options.browsers && !IframeShim.ready) window.addEvent('load', inject);
+			if (!IframeShim.ready) window.addEvent('load', inject);
 			else inject();
 		} else {
 			this.position = this.hide = this.show = this.dispose = $lambda(this);
@@ -70,20 +84,20 @@ var IframeShim = new Class({
 	},
 
 	position: function(){
-		if (!IframeShim.ready) return this;
-		var size = this.element.measure(function(){ return this.getSize(); });
-		if ($type(this.options.margin)){
+		if (!IframeShim.ready || !this.shim) return this;
+		var size = this.element.measure(function(){ 
+			return this.getSize(); 
+		});
+		if (this.options.margin != undefined){
 			size.x = size.x - (this.options.margin * 2);
 			size.y = size.y - (this.options.margin * 2);
 			this.options.offset.x += this.options.margin;
 			this.options.offset.y += this.options.margin;
 		}
-		if (this.shim) {
-			this.shim.set({width: size.x, height: size.y}).position({
-				relativeTo: this.element,
-				offset: this.options.offset
-			});
-		}
+		this.shim.set({width: size.x, height: size.y}).position({
+			relativeTo: this.element,
+			offset: this.options.offset
+		});
 		return this;
 	},
 

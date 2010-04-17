@@ -20,7 +20,7 @@
 	
 		Builder.root = "../";
 		Builder.scripts.specs = {
-			'Core' : ['Lang'],
+			'Core' : ['Lang', 'Log'],
 			'Class' : ['Class.Refactor', 'Class.Binds', 'Class.Occlude'],
 			'Native' : ['Date', 'Date.Extras', 'Hash.Extras', 'String.Extras', 'Array.Extras', 'String.QueryString', 'URI', 'URI.Relative'],
 			'Element' : ['Element.Forms', 'Element.Measure', 'Elements.From'],
@@ -34,7 +34,14 @@
 </head>
 
 <body>
-
+<script type="text/javascript" charset="utf-8">
+(function(){try{
+	
+	var result = window.location.search.match(/\bscript=(.*?\.js)/i);
+	if (result) document.write('<scr'+'ipt src="'+ result[1] +'" type="text/javascript"><\/script>');
+	
+}catch(e){}})();
+</script>	
 </body>
 
 </html>

@@ -20,31 +20,74 @@ MooTools Plugins and Enhancements Repository
 
 ### Changes
 
-#### Changes in MooTools More 1.2.4.1
-
 NOTE: none of the changes below are breaking changes.
 
-* Issues fixed (in lighthouse): #71, #72, #76, #90, #99
-* New feature: Eleement.Delegation - a partial port of event delegation from MooTools 2.0 (does not support custom events or blur/focus)
-* New feature: Elements.From converts html strings to DOM elements
-* New feature: Depender - a client side MooTools dependency loader
-** Related: [Depender App](https://github.com/anutron/mootools-depender/) - a server side implementation (that's much faster)
-* New feature: Mask - masks elements (including the window) with a semi-opaque overlay (previously known as Modalizer on Clientcide.com)
-* New feature: Spinner - automates the creation of ajax spinners over DOM elements being updated (previously known as Waiter on Clientcide.com)
-* New feature: Form.Request, Form.Request.Append - automates creating ajax forms that update HTML in DOM elements
-* New feature: HtmlTable, HtmlTable.Zebra, HtmlTable.Sort, HtmlTable.Select - interactive and auto-generated html table elements
-* New feature: Keyboard - a robust event manager for keyboard groupings
-* Added new option to Fx.Accordion: returnHeightToAuto
-* Added credit card number validator to FormValidator
-* FormValidator is now Form.Validator
-* MooTools Lang is now a part of MooTools More (again)
-* Added timeDiff method to Date.Extras
-* Added ability to ignore scroll position with Element.Position
-* Element.setPosition is now Element.position (non-breaking change)
-* Added hideAll and showAll methods for OverText
-* Added Element.isVisible method
-* URI's get method no longer returns null for missing parts; it returns an empty string.
-* Various other tweaks and bug fixes
+#### Changes in MooTools More 1.2.4.4
+
+* Fixed Tips. Again.
+
+#### Changes in MooTools More 1.2.4.3
+
+* Nearly 50 bug fixes ([see the milestone for 1.2.4.3 in Lighthouse](https://mootools.lighthouseapp.com/projects/24057/milestones/54424-1243)).
+* Keyboard:
+  * Added some support for just pressing 'shift', 'control', or 'alt'
+  * Added a bunch of keycodes for Mac compatibility
+* Keyboard.Extras:
+  * Support for "shortcuts" which are keyboard entries that have names and descriptions.
+  * Also provides methods for listing all the active shortcuts as well as allowing a shortcut to be rebound (for instance, if you were to allow the user to choose a key for a shortcut).
+  * Added a change event to Keyboard.manager whenever any keyboard is activated.
+* Tips:
+  * They work again (I know, that's not really a feature).
+  * NEW Tips option "windowPadding" allows you to reduce or expand the virtual size of the window for tip positioning. Defaults to `{x:0, y:0}`. You can use that is a workaround for the scrollbars not being considered when calculating tip positions.
+* HtmlTable:
+  * fixed numerous bugs filed in Lighthouse
+  * ensuring that HtmlTable doesn't apply it's click behavior more than once...
+  * fixing a bug where HtmlTable couldn't push headers defined in the options.
+  * reworking HtmlTable's dom a bit to allow for positioning of the sort icon
+  * adding new set method for headers and footers.
+  * Fixed error in HtmlTable.Parsers when sorting by date. format('db') was being applied to the text and not the date object.
+* Array: 
+  * Added Array.shuffle
+* Request.JSONP:
+  * making JSONP pass all arguments, not just the first, to its complete/success methods; [see this discussion on the google group](http://groups.google.com/group/mootools-users/browse_thread/thread/9cfa52bf0cf05bac).
+* Fx.Slide:
+  * Added an option to specify the wrapper element for Fx.Slide. Was already present in the docs but could not be passed as an option.
+* Mask:
+  * adding options for the IframeShim for Mask
+
+#### Changes in MooTools More 1.2.4.2
+
+* Per the change in -core, $ is no longer used (uses document.id instead)
+* Element.Measure: trying cssText solution for Element.expose (again).
+* Element.Forms: swapping feature detection for browser support per
+* Date: Massive refactoring of Date.js and Date.Extras.js
+* Drag.Move: Fixing drag with grid issues
+* IframeShim: altering zindex assignment in IframeShim to better ensure that it’s always underneath the shimmed element, updating Iframeshim’s empty document creation; fixes https issues in IE6
+* FormValidator: reworking formvalidator scroll-to logic to be a little more efficient
+* OverText: preventing overtext from focusing on inputs except when they are interacted with (so OverText.update() does not focus an input);now stops polling when elements are hidden (when polling is enabled)
+* Fx.Scroll: adding scrollIntoView method - scrolls an element so that it is completely visible; if below the view, scrolls down until it is at the bottom of the screen, if above, scrolls up until it is at the top.
+* JSONP: was calling (the deprecated) this.request instead of this.send during retries
+* URI: Adding set(‘data’, obj) to set
+* Assets: adding error callback for Assets.images
+* Tips: removing dependency for Element.Measure for Tips; updating CSS class name in OverText
+* Numerous small fixes, speed improvements, documentation tweaks, etc.
+
+#### Changes in MooTools More 1.2.4.1
+
+* [roughly a dozen issues fixed or closed (in lighthouse)](https://mootools.lighthouseapp.com/projects/24057-mootoolsmore/tickets?q=milestone%3A1.2.4.1)
+* Numerous documentation updates
+* Spinner: Adding a getSpinner method to Request in Spinner's refactoring of that Class
+* Spinner: Fixing default styles
+* Form.Validator, Date: Added Ukrainian translations
+* Date: Added new Date parser (parses "Thu Oct 22 08:11:23 +0000 2009")
+* Fx.Accordion: handling the alwaysHide option so you can still have returnHeightToAuto set to true (see [this discussion](http://groups.google.com/group/mootools-users/browse_thread/thread/27004d2d0dc227c2u))
+* Tips: Restoring arguments to the show/hide events; tip no longer defaults to display:none (this restores the previous behavior)
+* Fx.Reveal: stores cssText whenever it starts a transition and restores it when it finishes or is canceled, leaving the element without a bunch of inline styles, as if you'd just done setStyle('display', 'block'/'none')
+* Fx.SmoothScroll: adding a "scrolledTo" event
+* Drag: added new 'stopPropagation' option
+* HtmlTable.Select: ensuring that instances only delegates to immediate children (for nested tables)
+* HtmlTable.Sort.js: detects and sorts date columns more accurately, handles negative integers and floats
+* Reorganized scripts json so Depender can implement Log
 
 ##### Changes to Clientcide plugins adopted by MooTools More in this release
 

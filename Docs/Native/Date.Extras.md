@@ -8,13 +8,14 @@ Extends the *Date* native to include more powerful parsing and formatting functi
 * Nicholas Barthelemy - https://svn.nbarthelemy.com/date-js/
 * Harald Kirshner - mail [at] digitarald.de ; http://digitarald.de
 * Aaron Newton - aaron [dot] newton [at] cnet [dot] com
+* Scott Kyle - scott [at] appden.com; http://appden.com
 
 ### Tutorial/Demo
 
 * [Online Tutorial/Demo][]
 [Online Tutorial/Demo]:http://www.clientcide.com/wiki/cnet-libraries/03-native/01-date.extras
 
-### License:
+### License
 
 MIT-style license
 	Extra Date Parsers: {#Date:parsers}
@@ -30,7 +31,7 @@ In addition to the two default parsers included in *[Date.js][]*, *Date.Extras.j
 	Date.parse('next monday') //"Mon Dec 17 2007 00:00:00 GMT-0800 (Pacific Standard Time)"
 	Date.parse('last wednesday') //"Wed Dec 05 2007 00:00:00 GMT-0800 (Pacific Standard Time)"
 
-### See Also:
+### See Also
 
 - [Date:parse][]
 

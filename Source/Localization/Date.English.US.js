@@ -1,13 +1,21 @@
 /*
-Script: Date.English.US.js
-	Date messages for US English.
+---
 
-	License:
-		MIT-style license.
+script: Date.English.US.js
 
-	Authors:
-		Aaron Newton
+description: Date messages for US English.
 
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- /Lang
+
+provides: [Date.English.US]
+
+...
 */
 
 MooTools.lang.set('en-US', 'Date', {
@@ -38,7 +46,7 @@ MooTools.lang.set('en-US', 'Date', {
 	weeksAgo: '{delta} weeks ago',
 	monthAgo: '1 month ago',
 	monthsAgo: '{delta} months ago',
-	yearthAgo: '1 year ago',
+	yearAgo: '1 year ago',
 	yearsAgo: '{delta} years ago',
 	lessThanMinuteUntil: 'less than a minute from now',
 	minuteUntil: 'about a minute from now',

@@ -1,12 +1,23 @@
 /*
-Script: HtmlTable.js
-	Builds table elements with methods to add rows.
+---
 
-	License:
-		MIT-style license.
+script: HtmlTable.js
 
-	Authors:
-		Aaron Newton
+description: Builds table elements with methods to add rows.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- Core:1.2.4/Options
+- Core:1.2.4/Events
+- /Class.Occlude
+
+provides: [HtmlTable]
+
+...
 */
 
 var HtmlTable = new Class({
@@ -48,7 +59,9 @@ var HtmlTable = new Class({
 		this.tfoot = document.id(this.element.tFoot);
 		if (this.tfoot) this.foot = document.id(this.thead.rows[0]);
 
-		this.options.rows.each(this.push.bind(this));
+		this.options.rows.each(function(row){
+			this.push(row);
+		}, this);
 
 		['adopt', 'inject', 'wraps', 'grab', 'replaces', 'dispose'].each(function(method){
 				this[method] = this.element[method].bind(this.element);
@@ -64,34 +77,38 @@ var HtmlTable = new Class({
 		return this;
 	},
 
+	set: function(what, items) {
+		var target = (what == 'headers') ? 'tHead' : 'tFoot';
+		this[target.toLowerCase()] = (document.id(this.element[target]) || new Element(target.toLowerCase()).inject(this.element, 'top')).empty();
+		var data = this.push(items, {}, this[target.toLowerCase()], what == 'headers' ? 'th' : 'td');
+		if (what == 'headers') this.head = document.id(this.thead.rows[0]);
+		else this.foot = document.id(this.thead.rows[0]);
+		return data;
+	},
+
 	setHeaders: function(headers){
-		this.thead = (document.id(this.element.tHead) || new Element('thead').inject(this.element, 'top')).empty();
-		this.push(headers, this.thead, 'th');
-		this.head = document.id(this.thead.rows[0]);
+		this.set('headers', headers);
 		return this;
 	},
 
 	setFooters: function(footers){
-		this.tfoot = (document.id(this.element.tFoot) || new Element('tfoot').inject(this.element, 'top')).empty();
-		this.push(footers, this.tfoot);
-		this.foot = document.id(this.thead.rows[0]);
+		this.set('footers', footers);
 		return this;
 	},
 
-	push: function(row, target, tag){
+	push: function(row, rowProperties, target, tag){
 		var tds = row.map(function(data){
-			var td = new Element(tag || 'td', data.properties),
-				type = data.content || data || '',
+			var td = new Element(tag || 'td', data ? data.properties : {}),
+				type = (data ? data.content : '') || data,
 				element = document.id(type);
-
-			if(element) td.adopt(element)
+			if($type(type) != 'string' && element) td.adopt(element);
 			else td.set('html', type);
 
 			return td;
 		});
 
 		return {
-			tr: new Element('tr').inject(target || this.body).adopt(tds),
+			tr: new Element('tr', rowProperties).inject(target || this.body).adopt(tds),
 			tds: tds
 		};
 	}

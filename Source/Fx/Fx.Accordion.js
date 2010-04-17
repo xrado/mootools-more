@@ -1,28 +1,39 @@
 /*
-Script: Fx.Accordion.js
-	An Fx.Elements extension which allows you to easily create accordion type controls.
+---
 
-	License:
-		MIT-style license.
+script: Fx.Accordion.js
 
-	Authors:
-		Valerio Proietti
+description: An Fx.Elements extension which allows you to easily create accordion type controls.
+
+license: MIT-style license
+
+authors:
+- Valerio Proietti
+
+requires:
+- Core:1.2.4/Element.Event
+- /Fx.Elements
+
+provides: [Fx.Accordion]
+
+...
 */
 
-var Accordion = Fx.Accordion = new Class({
+Fx.Accordion = new Class({
 
 	Extends: Fx.Elements,
 
 	options: {/*
 		onActive: $empty(toggler, section),
-		onBackground: $empty(toggler, section),*/
+		onBackground: $empty(toggler, section),
+		*/
+		fixedHeight: false,
+		fixedWidth: false,
 		display: 0,
 		show: false,
 		height: true,
 		width: false,
 		opacity: true,
-		fixedHeight: false,
-		fixedWidth: false,
 		alwaysHide: false,
 		trigger: 'click',
 		initialDisplayFx: true,
@@ -30,10 +41,14 @@ var Accordion = Fx.Accordion = new Class({
 	},
 
 	initialize: function(){
-		var params = Array.link(arguments, {'container': Element.type, 'options': Object.type, 'togglers': $defined, 'elements': $defined});
+		var params = Array.link(arguments, {
+			'container': Element.type, //deprecated
+			'options': Object.type,
+			'togglers': $defined,
+			'elements': $defined
+		});
 		this.parent(params.elements, params.options);
 		this.togglers = $$(params.togglers);
-		this.container = document.id(params.container);
 		this.previous = -1;
 		this.internalChain = new Chain();
 		if (this.options.alwaysHide) this.options.wait = true;
@@ -57,7 +72,8 @@ var Accordion = Fx.Accordion = new Class({
 				for (var fx in this.effects) el.setStyle(fx, 0);
 			}
 		}, this);
-		if ($chk(this.options.display)) this.display(this.options.display, this.options.initialDisplayFx);
+		if ($chk(this.options.display) || this.options.initialDisplayFx === false) this.display(this.options.display, this.options.initialDisplayFx);
+		if (this.options.fixedHeight !== false) this.options.returnHeightToAuto = false;
 		this.addEvent('complete', this.internalChain.callChain.bind(this.internalChain));
 	},
 
@@ -68,7 +84,9 @@ var Accordion = Fx.Accordion = new Class({
 		this.togglers.include(toggler);
 		this.elements.include(element);
 		var idx = this.togglers.indexOf(toggler);
-		toggler.addEvent(this.options.trigger, this.display.bind(this, idx));
+		var displayer = this.display.bind(this, idx);
+		toggler.store('accordion:display', displayer);
+		toggler.addEvent(this.options.trigger, displayer);
 		if (this.options.height) element.setStyles({'padding-top': 0, 'border-top': 'none', 'padding-bottom': 0, 'border-bottom': 'none'});
 		if (this.options.width) element.setStyles({'padding-left': 0, 'border-left': 'none', 'padding-right': 0, 'border-right': 'none'});
 		element.fullOpacity = 1;
@@ -81,32 +99,94 @@ var Accordion = Fx.Accordion = new Class({
 		return this;
 	},
 
+	removeSection: function(toggler, displayIndex) {
+		var idx = this.togglers.indexOf(toggler);
+		var element = this.elements[idx];
+		var remover = function(){
+			this.togglers.erase(toggler);
+			this.elements.erase(element);
+			this.detach(toggler);
+		}.bind(this);
+		if (this.now == idx || displayIndex != undefined) this.display($pick(displayIndex, idx - 1 >= 0 ? idx - 1 : 0)).chain(remover);
+		else remover();
+		return this;
+	},
+
+	detach: function(toggler){
+		var remove = function(toggler) {
+			toggler.removeEvent(this.options.trigger, toggler.retrieve('accordion:display'));
+		}.bind(this);
+		if (!toggler) this.togglers.each(remove);
+		else remove(toggler);
+		return this;
+	},
+
 	display: function(index, useFx){
 		if (!this.check(index, useFx)) return this;
 		useFx = $pick(useFx, true);
-		if (this.options.returnHeightToAuto) {
-			var prev = this.elements[this.previous];
-			if (prev) for (var fx in this.effects) prev.setStyle(fx, prev[this.effects[fx]]);
-		}
 		index = ($type(index) == 'element') ? this.elements.indexOf(index) : index;
+		if (index == this.previous) return this;
+		if (this.options.returnHeightToAuto){
+			var prev = this.elements[this.previous];
+			if (prev && !this.selfHidden){
+				for (var fx in this.effects){
+					prev.setStyle(fx, prev[this.effects[fx]]);
+				}
+			}
+		}
 		if ((this.timer && this.options.wait) || (index === this.previous && !this.options.alwaysHide)) return this;
 		this.previous = index;
 		var obj = {};
 		this.elements.each(function(el, i){
 			obj[i] = {};
-			var hide = (i != index) || 
-						(this.options.alwaysHide && ((el.offsetHeight > 0 && this.options.height) || 
-							el.offsetWidth > 0 && this.options.width));
+			var hide;
+			if (i != index){
+				hide = true;
+			} else if (this.options.alwaysHide && ((el.offsetHeight > 0 && this.options.height) || el.offsetWidth > 0 && this.options.width)){
+				hide = true;
+				this.selfHidden = true;
+			}
 			this.fireEvent(hide ? 'background' : 'active', [this.togglers[i], el]);
 			for (var fx in this.effects) obj[i][fx] = hide ? 0 : el[this.effects[fx]];
 		}, this);
 		this.internalChain.chain(function(){
-			if (this.options.returnHeightToAuto) {
+			if (this.options.returnHeightToAuto && !this.selfHidden){
 				var el = this.elements[index];
-				el.setStyle('height', 'auto');
+				if (el) el.setStyle('height', 'auto');
 			};
 		}.bind(this));
 		return useFx ? this.start(obj) : this.set(obj);
+	}
+
+});
+
+/*
+	Compatibility with 1.2.0
+*/
+var Accordion = new Class({
+
+	Extends: Fx.Accordion,
+
+	initialize: function(){
+		this.parent.apply(this, arguments);
+		var params = Array.link(arguments, {'container': Element.type});
+		this.container = params.container;
+	},
+
+	addSection: function(toggler, element, pos){
+		toggler = document.id(toggler);
+		element = document.id(element);
+		var test = this.togglers.contains(toggler);
+		var len = this.togglers.length;
+		if (len && (!test || pos)){
+			pos = $pick(pos, len - 1);
+			toggler.inject(this.togglers[pos], 'before');
+			element.inject(toggler, 'after');
+		} else if (this.container && !test){
+			toggler.inject(this.container);
+			element.inject(this.container);
+		}
+		return this.parent.apply(this, arguments);
 	}
 
 });

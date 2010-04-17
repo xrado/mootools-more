@@ -1,12 +1,21 @@
 /*
-Script: Form.Validator.Inline.js
-	Extends Form.Validator to add inline messages.
+---
 
-	License:
-		MIT-style license.
+script: Form.Validator.Inline.js
 
-	Authors:
-		Aaron Newton
+description: Extends Form.Validator to add inline messages.
+
+license: MIT-style license
+
+authors:
+- Aaron Newton
+
+requires:
+- /Form.Validator
+
+provides: [Form.Validator.Inline]
+
+...
 */
 
 Form.Validator.Inline = new Class({
@@ -44,7 +53,7 @@ Form.Validator.Inline = new Class({
 		var cssClass = (warn) ? 'warning-advice' : 'validation-advice';
 		var advice = this.getAdvice(className, field);
 		if(advice) {
-			advice = advice.clone(true, true).set('html', errorMsg).replaces(advice);
+			advice = advice.set('html', errorMsg);
 		} else {
 			advice = new Element('div', {
 				html: errorMsg,
@@ -69,6 +78,7 @@ Form.Validator.Inline = new Class({
 			field.store(this.getPropName(className), true);
 			if (advice.reveal) advice.reveal();
 			else advice.setStyle('display', 'block');
+			this.fireEvent('showAdvice', [field, advice, className]);
 		}
 	},
 
@@ -79,6 +89,7 @@ Form.Validator.Inline = new Class({
 			//if Fx.Reveal.js is present, transition the advice out
 			if (advice.dissolve) advice.dissolve();
 			else advice.setStyle('display', 'none');
+			this.fireEvent('hideAdvice', [field, advice, className]);
 		}
 	},
 

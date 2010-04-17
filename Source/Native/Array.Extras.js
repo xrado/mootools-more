@@ -1,13 +1,21 @@
 /*
-Script: Array.Extras.js
-	Extends the Array native object to include useful methods to work with arrays.
+---
 
-	License:
-		MIT-style license.
+script: Array.Extras.js
 
-	Authors:
-		Christoph Pojer
+description: Extends the Array native object to include useful methods to work with arrays.
 
+license: MIT-style license
+
+authors:
+- Christoph Pojer
+
+requires:
+- Core:1.2.4/Array
+
+provides: [Array.Extras]
+
+...
 */
 Array.implement({
 
@@ -35,6 +43,15 @@ Array.implement({
 
 	unique: function(){
 		return [].combine(this);
+	},
+
+	shuffle: function(){
+		for (var i = this.length; i && --i;){
+			var temp = this[i], r = Math.floor(Math.random() * ( i + 1 ));
+			this[i] = this[r];
+			this[r] = temp;
+		}
+		return this;
 	}
 
 });
