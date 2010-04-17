@@ -110,7 +110,7 @@ provides: [Element.Delegation]
 					break;
 				case 'mouseleave':
 					related = e.toElement || e.relatedTarget;
-					if(related && $$(related.getParents(), related).contains(el)) return this;
+					if(related && (related == el || related.getParents().contains(el))) return this;
 					break;
 			}
 			
